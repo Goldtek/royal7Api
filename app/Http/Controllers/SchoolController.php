@@ -29,7 +29,6 @@ class SchoolController extends ApiController
         $code = md5(uniqid().time());
         $email = $request->email;
         Mail::to($email)->send(new SchoolAdministrator($email,$code));
-        return $this->success("email sent");
          //store in database
         $createAccount = new CreateAccount;
         $createAccount->code = $code;
