@@ -70,6 +70,9 @@ Route::post('user/logout', 'UserController@logOut');
     // route for role creation
     Route::post('role/permission/create', 'SchoolController@createRolePermission');
 
+    // route to view roles
+    Route::get('roles/view', 'UserController@viewRoles');
+
     // route for role creation of subject
     Route::post('subject/create', 'SchoolController@createSubject');
 

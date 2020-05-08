@@ -143,6 +143,14 @@ class UserController extends ApiController
     
     }
 
+    public function viewRoles(Request $request) {
+        $roles = Role::get();
+        return response()->json([
+            'roles' => $roles,
+             'success' => true,
+        ]);
+    }
+
     public function logOut(){
         Auth::logout();
         return $this->success('User logged Out');
