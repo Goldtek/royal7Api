@@ -92,7 +92,15 @@ class SchoolController extends ApiController
                 $user->role_id = 1;
                 $user->password = Hash::make($request->password);
                 $user->save();
+                $token = $user->createToken('authToken')->accessToken;
                 return $this->success('School account has been successfully created.');
+                // return response()->json([
+                //     'user' => $user,
+                //     'token' => $token,
+                //     'permissions' => $user->UserRoles(),
+                //      'success' => true,
+                //      'mesage' => 
+                // ]);
             }
         } catch (\Exception $e) {
             return $this->fail("Error: ".$e);

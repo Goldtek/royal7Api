@@ -130,7 +130,7 @@ class UserController extends ApiController
                 // get user details and permission of the user based on the role
                 return response()->json([
                     'user' => Auth()->user(),
-                    'token' => $token,
+                    'token' => Auth()->user()->createToken('authToken')->accessToken,
                     'permissions' => Auth()->user()->UserRoles(),
                      'success' => true,
                 ]);

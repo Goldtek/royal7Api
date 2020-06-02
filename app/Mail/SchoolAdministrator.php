@@ -6,11 +6,12 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Sichikawa\LaravelSendgridDriver\SendGrid;
 
 class SchoolAdministrator extends Mailable
 {
-    use Queueable, SerializesModels;
-
+   // use Queueable, SerializesModels;
+   use SendGrid;
 
     protected $email;
 
@@ -38,8 +39,17 @@ class SchoolAdministrator extends Mailable
         ->subject('School Admininstratoer Email Confirmation')
         ->markdown('emails.admin.confirmation')
         ->with([
-            'link' => 'https:/www.royal7.com/confirm/'.$this->email.'/'.$this->code,
+            'link' => 'https://royal7.netlify.app/confirm/'.$this->email.'/'.$this->code,
             'email' => $this->email,
+        ]) // added the sendgrid params
+        ->sendgrid([
+            'personalizations' => [`
+                [
+                    'substitutions' => [
+                        ':myname' => 's-ichikawa',
+                    ],
+                ],
+            ],
         ]);
     }
 }
