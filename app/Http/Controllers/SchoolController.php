@@ -31,10 +31,10 @@ class SchoolController extends ApiController
             $email = $request->email;
             Mail::to($email)->send(new SchoolAdministrator($email,$code));
             //store in database
-            // $createAccount = new CreateAccount;
-            // $createAccount->code = $code;
-            // $createAccount->email = $email;
-            // $createAccount->save();
+            $createAccount = new CreateAccount;
+            $createAccount->code = $code;
+            $createAccount->email = $email;
+            $createAccount->save();
        
             return $this->success('Email has been successfully sent to '.$email.'.');
         } catch (\Exception $e) {
