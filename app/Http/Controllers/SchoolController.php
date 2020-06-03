@@ -25,17 +25,21 @@ class SchoolController extends ApiController
         if(empty($request->email)) {
             return $this->missingField("email is required!");
         }
-        // generate random code
-        $code = md5(uniqid().time());
-        $email = $request->email;
-        Mail::to($email)->send(new SchoolAdministrator($email,$code));
-         //store in database
-        $createAccount = new CreateAccount;
-        $createAccount->code = $code;
-        $createAccount->email = $email;
-        $createAccount->save();
+        try {
+            // generate random code
+            $code = md5(uniqid().time());
+            $email = $request->email;
+            Mail::to($email)->send(new SchoolAdministrator($email,$code));
+            //store in database
+            // $createAccount = new CreateAccount;
+            // $createAccount->code = $code;
+            // $createAccount->email = $email;
+            // $createAccount->save();
        
-        return $this->success('Email has been successfully sent to '.$email.'.');
+            return $this->success('Email has been successfully sent to '.$email.'.');
+        } catch (\Exception $e) {
+            return $this->fail("Invalid Account, Please Try Again.");
+        }
     }
 
     public function confirmEmail(Request $request) {

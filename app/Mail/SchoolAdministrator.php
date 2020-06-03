@@ -43,7 +43,7 @@ class SchoolAdministrator extends Mailable
             'email' => $this->email,
         ]) // added the sendgrid params
         ->sendgrid([
-            'personalizations' => [`
+            'personalizations' => [
                 [
                     'substitutions' => [
                         ':myname' => 's-ichikawa',

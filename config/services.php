@@ -33,7 +33,7 @@ return [
         'secret' => env('SPARKPOST_SECRET'),
     ],
     'sendgrid' => [
-        'api_key' => env('SENDGRID_API_KEY'),
+        'api_key' => env('SENDGRID_API_KEY', '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'),
     ],
 
 ];
