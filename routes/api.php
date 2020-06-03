@@ -37,7 +37,7 @@ Route::post('user/login', 'UserController@login');
 Route::post('user/logout', 'UserController@logOut');
 
 
- // Route::middleware('auth:api')->group( function () {
+  Route::middleware('auth:api')->group( function () {
     
     //route to create use[teacher/student/staff]
     Route::post('user/create', 'UserController@createUser');
@@ -75,5 +75,5 @@ Route::post('user/logout', 'UserController@logOut');
     // route for role creation of class
     Route::post('class/create', 'SchoolController@createClass');
 
-// });
+ });
 

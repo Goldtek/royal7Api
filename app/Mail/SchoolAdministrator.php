@@ -35,7 +35,7 @@ class SchoolAdministrator extends Mailable
      */
     public function build()
     {
-        return $this->from('noreply@royal7.com')
+        return $this->from('noreply@edcollab.app')
         ->subject('School Admininstratoer Email Confirmation')
         ->markdown('emails.admin.confirmation')
         ->with([
