@@ -16,28 +16,28 @@ Route::get('/', function () {
                'data' => 'No Data Yet'];
     $response = \Response::json($result)->setStatusCode(200, 'Success');
     return $response;
-  })->middleware('cors');
+  });
 
 
 
 // route to generate confirmation mail for school admin
-Route::post('send/mail', 'SchoolController@createAdminMail')->middleware('cors');
+Route::post('send/mail', 'SchoolController@createAdminMail');
 
 
 // route to confirm school admin email
-Route::post('admin/confirm', 'SchoolController@confirmEmail')->middleware('cors');
+Route::post('admin/confirm', 'SchoolController@confirmEmail');
 
 //route to create school and admin
-Route::post('school/admin', 'SchoolController@createSchool')->middleware('cors');
+Route::post('school/admin', 'SchoolController@createSchool');
 
 //route to login
-Route::post('user/login', 'UserController@login')->middleware('cors');
+Route::post('user/login', 'UserController@login');
 
 //route to logout
-Route::post('user/logout', 'UserController@logOut')->middleware('cors');
+Route::post('user/logout', 'UserController@logOut');
 
 
-  Route::middleware(['auth:api', 'cors'])->group( function () {
+  Route::middleware('auth:api')->group( function () {
     
     //route to create use[teacher/student/staff]
     Route::post('user/create', 'UserController@createUser');
