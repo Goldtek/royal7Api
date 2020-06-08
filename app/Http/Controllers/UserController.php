@@ -7,6 +7,7 @@ use App\User;
 use App\Models\RolePermission;
 use App\Models\Role;
 use App\Models\Permission;
+use App\Models\Student;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
@@ -28,6 +29,15 @@ class UserController extends ApiController
         }else if(empty($request->password)){
             return $this->missingField('Password is missing.');
         }
+        // validation if the user created is a tudent using role
+        if($request->roleId === 4){
+            if(empty($request->classId)){
+                return $this->missingField('Student cannot be created without been assigned to a class.');
+            } else if(empty($request->sessionId)){
+                return $this->missingField('Student cannot be created without a session');
+            }
+        }
+
         try {
             $user = new User;
             $user->firstname = $request->firstname;
@@ -36,8 +46,17 @@ class UserController extends ApiController
             $user->school_id = $request->schoolId;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
-            
+            // apply carbon here
             if($user->save()){
+                if($request->roleId === 4){
+                    // create student if the role is a student
+                    $student = new Student;
+                    $student->class_id = $request->classId;
+                    $student->session_id = $request->sessionId;
+                    $student->user_id = $user->id;
+                    $student->school_id = $request->schoolId;
+                    $student->save();
+                }
                 return $this->success('Account has been created for '.$request->firstname." ".$request->lastname);
             }
         } catch (\Exception $e) {
@@ -47,7 +66,7 @@ class UserController extends ApiController
 
     public function viewAllTeachers(Request $request){
         try {
-            $users = User::where('roleId', '=', 2)->paginate(15);
+            $users = User::where('roleId', '=', 3)->paginate(15);
 
         } catch (\Exception $e) {
             return $this->fail("Error viewing all teachers. ".$e->getMessage());
@@ -56,12 +75,24 @@ class UserController extends ApiController
 
     public function ViewAllStudents(Request $request){
         try {
-            $users = User::where('roleId', '=', 3)->paginate(15);
+            $users = User::where('roleId', '=', 2)->paginate(15);
 
         } catch (\Exception $e) {
             return $this->fail("Error viewing all students. ".$e->getMessage());
         }
     }
+
+    //view students in a class in a session
+
+    public function ViewStudents(Request $request){
+        try {
+            $users = User::where('roleId', '=', 2)->paginate(15);
+
+        } catch (\Exception $e) {
+            return $this->fail("Error viewing all students. ".$e->getMessage());
+        }
+    }
+
 
     public function ViewStudentsInClass(Request $request){
         try {

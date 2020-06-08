@@ -114,12 +114,24 @@ class SchoolController extends ApiController
     // assign subject to teacher
     public function assignSubject(Request $request){
         try {
+            // 
 
         } catch (\Exception $e) {
             return $this->fail("Unable to assign Subject to, Please try again.");
         }
     }
 
+    // teachers ability to view subjects assigned to him/her
+    public function assignedSubjects(Request $request){
+        try {
+            // 
+
+        } catch (\Exception $e) {
+            return $this->fail("Unable to fetched assigned subjects, Please try again.");
+        }
+    }
+
+    // view subjects in a class
     public function viewSubjectsForClass(Request $request){
         try {
 
@@ -128,6 +140,34 @@ class SchoolController extends ApiController
             return $this->fail("Error viewing subjects. ".$e->getMessage());
         }
     }
+
+
+    // grade student
+    public function gradeStudent(Request $request){
+        try {
+            if(empty($request->class_id)) {
+                return $this->missingField("Class field is required!");
+            }else if(empty($request->session_id)) {
+                return $this->missingField("Session field is required!");
+            } else if(empty($request->student_id)) {
+                return $this->missingField("Student field is required!");
+            } else if(empty($request->school_id)) {
+                return $this->missingField("School field is required!");
+            } else if(empty($request->subject_id)) {
+                return $this->missingField("Subject field is required!");
+            } else if(empty($request->exam)) {
+                return $this->missingField("Exam field is required!");
+            } else if(empty($request->section_id)) {
+                return $this->missingField("Section field is required!");
+            }
+
+
+        } catch (\Exception $e) {
+            return $this->fail("Error viewing subjects. ".$e->getMessage());
+        }
+    }
+
+
 
 
     public function createRolePermission (Request $request) {
@@ -146,19 +186,19 @@ class SchoolController extends ApiController
             return $this->fail("Error creating role permissions. ".$e->getMessage());
         }
    
-   }
-
-   public function createClass(Request $request){
-    if(empty($request->name)){
-        return $this->missingField('Name Field is missing.');
     }
 
-    try {
-        $class = new ClassInfo;
-        $class->name = $request->name;
-        
-        if($class->save()){
-            return $this->success('Class has been created for '.$request->name);
+    public function createClass(Request $request){
+        if(empty($request->name)){
+            return $this->missingField('Name Field is missing.');
+        }
+
+        try {
+            $class = new ClassInfo;
+            $class->name = $request->name;
+            
+            if($class->save()){
+                return $this->success('Class has been created for '.$request->name);
             }
         } catch (\Exception $e) {
             return $this->fail("Unable to create Class ".$e->getMessage());
@@ -199,3 +239,7 @@ class SchoolController extends ApiController
 
     }
 }
+
+
+// check the migration and confirm the ids are auto-increment
+// remote date_created and updated from roles creation or add carbon:now to it

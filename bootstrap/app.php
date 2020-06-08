@@ -42,7 +42,6 @@ $app->singleton(
 );
 
 
-
  $app->register(Sichikawa\LaravelSendgridDriver\MailServiceProvider::class);
 
 
