@@ -44,6 +44,9 @@ $app->singleton(
 
  $app->register(Sichikawa\LaravelSendgridDriver\MailServiceProvider::class);
 
+ // $app->register(Fruitcake\Cors\CorsServiceProvider::class);
+
+ // $app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
