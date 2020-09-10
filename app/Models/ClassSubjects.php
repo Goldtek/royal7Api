@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class ClassInfo extends Model
+class ClassSubjects extends Model
 {
     protected $fillable = [
-        'name', 'school_id'
+        'class_id','school_id','subject_id'
     ];
 }

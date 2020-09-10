@@ -17,7 +17,8 @@ class CreateExamGradesTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('class_id');
             $table->bigInteger('user_id');
-            $table->bigInteger('course_id');
+            $table->bigInteger('subject_id');
+            $table->bigInteger('school_id');
             $table->Integer('year');
             $table->Integer('score');
             $table->string('term');

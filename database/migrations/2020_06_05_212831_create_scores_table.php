@@ -18,6 +18,7 @@ class CreateScoresTable extends Migration
             $table->bigInteger('student_id');
             $table->bigInteger('section_id');
             $table->bigInteger('subject_id');
+            $table->bigInteger('school_id');
             $table->bigInteger('test');
             $table->bigInteger('exam');
             $table->bigInteger('average');

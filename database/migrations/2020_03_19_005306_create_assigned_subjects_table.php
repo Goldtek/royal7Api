@@ -15,9 +15,11 @@ class CreateAssignedSubjectsTable extends Migration
     {
         Schema::create('assigned_subjects', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('class_id');
-            $table->bigInteger('user_id');
-            $table->bigInteger('course_id');
+            $table->bigInteger('classId');
+            $table->bigInteger('userId');
+            $table->bigInteger('subjectId');
+            $table->bigInteger('sessionId');
+            $table->bigInteger('school_id');
             $table->string('term');
             $table->timestamps();
         });

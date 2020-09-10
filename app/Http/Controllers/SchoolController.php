@@ -15,6 +15,8 @@ use App\Models\CreateAccount;
 use App\Models\RolePermission;
 use App\Models\ClassInfo;
 use App\Models\Subject;
+use App\Models\AssignedSubject;
+use App\Models\ClassSubjects;
 
 
 class SchoolController extends ApiController
@@ -112,8 +114,29 @@ class SchoolController extends ApiController
     }
     // assign subject to teacher
     public function assignSubject(Request $request){
+        if(empty($request->userId)) {
+            return $this->missingField("userId is required!");
+        } else if(empty($request->subjectId)){
+            return $this->missingField("Subject Id is required!");
+        } else if(empty($request->classId)){
+            return $this->missingField("Class Id field is required!");
+        } else if(empty($request->sessionId)){
+            return $this->missingField("Session Id is required!");
+        } else if (empty($request->schoolId))  {
+            return $this->missingField("school Id is required!");
+        }
+
         try {
-            // 
+            $assignedSubject = new AssignedSubject;
+            $assignedSubject->userId = $request->userId;
+            $assignedSubject->subjectId = $request->subjectId;
+            $assignedSubject->classId = $request->classId;
+            $assignedSubject->sessionId = $request->sessionId;
+            $assignedSubject->school_id = $request->schoolId;
+
+            if($assignedSubject->save()) {
+                return $this->success('Subject successfuly assigned');
+            }
 
         } catch (\Exception $e) {
             return $this->fail("Unable to assign Subject to, Please try again.");
@@ -122,8 +145,20 @@ class SchoolController extends ApiController
 
     // teachers ability to view subjects assigned to him/her
     public function assignedSubjects(Request $request){
+        if (empty($request->userId)) {
+            return $this->missingField("userId is required!");
+        } else if (empty($request->sessionId)){
+            return $this->missingField("Session Id is required!");
+        } else if (empty($request->schoolId))  {
+            return $this->missingField("school Id is required!");
+        }
         try {
-            // 
+              $assigned =  DB::table('assigned_subjects')->where('userId',$request->userId)->where('sessionId',$request->sessionId)
+              ->where('school_id',$request->schoolId)->get();
+              return response()->json([
+                    'assignedSubjects' => $assigned,
+                     'success' => true
+                ]);
 
         } catch (\Exception $e) {
             return $this->fail("Unable to fetched assigned subjects, Please try again.");
@@ -132,6 +167,22 @@ class SchoolController extends ApiController
 
     // view subjects in a class
     public function viewSubjectsForClass(Request $request){
+        try {
+
+            $assigned =  DB::table('assigned_subjects')->where('userId',$request->userId)->where('sessionId',$request->sessionId)
+            ->where('school_id',$request->schoolId)->get();
+            return response()->json([
+                  'assignedSubjects' => $assigned,
+                   'success' => true
+              ]);
+        } catch (\Exception $e) {
+            return $this->fail("Error viewing subjects. ".$e->getMessage());
+        }
+    }
+
+
+       // view the grades of a student in a class
+       public function viewEachStudents(Request $request){
         try {
 
 
@@ -178,7 +229,6 @@ class SchoolController extends ApiController
             foreach($request->permissions as $data) {
                 $pem = new RolePermission();
                 $pem ->role_id = $data['rolePermission']['roleId'];
-                $row ->permission_id = $data['rolePermission']['permissionId'];
                 $row->save();   
             }
             return $this->success('Role Permissions successfully created.');
@@ -195,8 +245,29 @@ class SchoolController extends ApiController
 
         try {
             $class = new ClassInfo;
+            $class->school_id = $request->schoolId;
             $class->name = $request->name;
             
+            if($class->save()){
+                return $this->success('Class has been created for '.$request->name);
+            }
+        } catch (\Exception $e) {
+            return $this->fail("Unable to create Class ".$e->getMessage());
+        }
+    }
+
+    //create subjects in each class
+    public function createSubjectInClass(Request $request){
+        if(empty($request->name)){
+            return $this->missingField('Name Field is missing.');
+        }
+
+        try {
+            $class = new ClassSubjects;
+            $class->school_id = $request->schoolId;
+            $class->class_id = $request->classId;
+            $class->subject_id = $request->subjectId;
+           
             if($class->save()){
                 return $this->success('Class has been created for '.$request->name);
             }
