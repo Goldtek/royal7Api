@@ -17,6 +17,7 @@ use App\Models\ClassInfo;
 use App\Models\Subject;
 use App\Models\AssignedSubject;
 use App\Models\ClassSubjects;
+use App\Models\TimeTable;
 
 
 class SchoolController extends ApiController
@@ -98,14 +99,14 @@ class SchoolController extends ApiController
                 $user->password = Hash::make($request->password);
                 $user->save();
                 $token = $user->createToken('authToken')->accessToken;
-                return $this->success('School account has been successfully created.');
-                // return response()->json([
-                //     'user' => $user,
-                //     'token' => $token,
-                //     'permissions' => $user->UserRoles(),
-                //      'success' => true,
-                //      'mesage' => 
-                // ]);
+                
+                 return response()->json([
+                  //   'user' => $user,
+                    'token' => $token,
+                     'permissions' => $user->UserRoles(),
+                     'success' => true,
+                      'mesage' => 'School account has been successfully created.'
+                 ]);
             }
         } catch (\Exception $e) {
             return $this->fail("Error: ".$e);
@@ -153,8 +154,20 @@ class SchoolController extends ApiController
             return $this->missingField("school Id is required!");
         }
         try {
-              $assigned =  DB::table('assigned_subjects')->where('userId',$request->userId)->where('sessionId',$request->sessionId)
-              ->where('school_id',$request->schoolId)->get();
+              $assigned =  DB::table('assigned_subjects')
+              ->where('userId',$request->userId)
+              ->where('sessionId',$request->sessionId)
+              ->where('school_id',$request->schoolId)
+              ->join('subjects', function($join){
+                    $join->on('subjects.id', '=' ,$request->subjectId)
+                    ->on('subjects.school_id', '=' ,$request->schoolId);
+                })
+                ->join('class', function($join){
+                    $join->on('class.id', '=' ,$request->subjectId)
+                    ->on('class.school_id', '=' ,$request->schoolId);
+                })
+                ->join('users','id', '=' ,$request->schoolId)
+              ->get();
               return response()->json([
                     'assignedSubjects' => $assigned,
                      'success' => true
@@ -169,10 +182,17 @@ class SchoolController extends ApiController
     public function viewSubjectsForClass(Request $request){
         try {
 
-            $assigned =  DB::table('assigned_subjects')->where('userId',$request->userId)->where('sessionId',$request->sessionId)
-            ->where('school_id',$request->schoolId)->get();
+            $assigned =  DB::table('class_subjects')
+            ->where('class_id',$request->classId)
+            ->where('school_id',$request->schoolId)
+            ->join('subjects', function($join){
+                $join->on('subjects.school_id', '=' ,$request->schoolId)
+                ->on('subjects.class_id', '=' ,$request->classId);
+            })
+            ->select()
+            ->get();
             return response()->json([
-                  'assignedSubjects' => $assigned,
+                  'subjectsinClass' => $assigned,
                    'success' => true
               ]);
         } catch (\Exception $e) {
@@ -219,6 +239,31 @@ class SchoolController extends ApiController
     }
 
 
+    public function setTimeTable(Request $request, $id){
+       
+    }
+
+    public function TimeTable(Request $request){
+        try {
+            
+        $timetable = DB::table('times_table')
+        ->join('class_subjects', 'class_subjects.id', '=', 'times_table.subjectId')
+        ->join('subjects', 'class_subjects.subjectId', '=', 'subjects.id')
+        ->join('users', 'users.id', '=', 'times_table.userId')
+        ->select('users.firstname', 'users.midname', 'users.lastname', 'subjects.name',
+         'times_table.start_time','times_table.end_time', 'times_table.date')
+        ->orderBy('teambudget.id','DESC')
+        ->where('times_table.id',$request->schoolId)
+        ->where('times_table.id',$request->sessionId)
+        ->get();
+        
+        } catch (\Exception $e) {
+            return $this->fail("Error viewing TimeTable. ".$e->getMessage());
+        }
+
+    }
+
+
 
 
     public function createRolePermission (Request $request) {
@@ -260,6 +305,14 @@ class SchoolController extends ApiController
     public function createSubjectInClass(Request $request){
         if(empty($request->name)){
             return $this->missingField('Name Field is missing.');
+        } else if(empty($request->subjectCode)) {
+            return $this->missingField('Subject Code Field is missing.');
+        } else if(empty($request->schoolId)) {
+            return $this->missingField('School ID Field is missing.');
+        } else if(empty($request->classId)) {
+            return $this->missingField('Class ID Field is missing.');
+        }  else if(empty($request->subjectId)) {
+            return $this->missingField('Subject ID Field is missing.');
         }
 
         try {
@@ -267,6 +320,7 @@ class SchoolController extends ApiController
             $class->school_id = $request->schoolId;
             $class->class_id = $request->classId;
             $class->subject_id = $request->subjectId;
+            $class->code = $request->subjectCode;
            
             if($class->save()){
                 return $this->success('Class has been created for '.$request->name);
@@ -279,7 +333,11 @@ class SchoolController extends ApiController
     public function createSubject(Request $request){
         if(empty($request->name)){
             return $this->missingField('Name Field is missing.');
-        }
+        }  else if(empty($request->schoolId)) {
+            return $this->missingField('School ID Field is missing.');
+        } else if(empty($request->userId)) {
+            return $this->missingField('User ID Field is missing.');
+        } 
 
         try {
             $subject = new Subject;

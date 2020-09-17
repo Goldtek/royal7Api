@@ -18,6 +18,7 @@ class CreateClassSubjectsTable extends Migration
             $table->bigInteger('class_id');
             $table->bigInteger('school_id');
             $table->bigInteger('subject_id');
+            $table->string('code');
             $table->timestamps();
         });
     }

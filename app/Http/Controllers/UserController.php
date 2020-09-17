@@ -28,6 +28,18 @@ class UserController extends ApiController
             return $this->missingField('school ID is missing.');
         }else if(empty($request->password)){
             return $this->missingField('Password is missing.');
+        } else if(empty($request->phone)){
+            return $this->missingField('Phone is missing.');
+        }
+        else if(empty($request->religion)){
+            return $this->missingField('Religion is missing.');
+        }
+        else if(empty($request->bloodgroup)){
+            return $this->missingField('Blood group is missing.');
+        } else if(empty($request->midname)){
+            return $this->missingField('Middle name is missing.');
+        } else if(empty($request->gender)){
+            return $this->missingField('Gender is missing.');
         }
         // validation if the user created is a student using role
         if($request->roleId === 4){
@@ -39,13 +51,22 @@ class UserController extends ApiController
         }
 
         try {
+            //upload photo
+
             $user = new User;
             $user->firstname = $request->firstname;
+            $user->midname = $request->midname;
             $user->lastname = $request->lastname;
+            $user->birthday = $request->birthday;
+            $user->phone = $request->phone;
+            $user->bloodgroup = $request->bloodgroup;
+            $user->gender = $request->gender;
+            $user->religion = $request->religion;
             $user->role_id = $request->roleId;
             $user->school_id = $request->schoolId;
             $user->email = $request->email;
             $user->password = Hash::make($request->password);
+            // $user->photo = $request->photoPath;
             // apply carbon here
             if($user->save()){
                 if($request->roleId === 4){
