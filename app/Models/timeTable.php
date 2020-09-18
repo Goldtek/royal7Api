@@ -7,6 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 class TimeTable extends Model
 {
     protected $fillable = [
-        'start_time','end_time','date','teacher','schoolId','sessionId','subjectId', 'supervisor', 'classId'
+        'start_time','end_time','date','userId','schoolId','sessionId','subjectId', 'classId'
     ];
 }

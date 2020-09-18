@@ -87,7 +87,11 @@ class UserController extends ApiController
 
     public function viewAllTeachers(Request $request){
         try {
-            $users = User::where('roleId', '=', 3)->paginate(15);
+            $teachers = User::where('roleId', '=', 3)->paginate(15);
+            return response()->json([
+                'teachers' => $teachers,
+                'success' => true
+                ]);
 
         } catch (\Exception $e) {
             return $this->fail("Error viewing all teachers. ".$e->getMessage());
@@ -96,33 +100,17 @@ class UserController extends ApiController
 
     public function ViewAllStudents(Request $request){
         try {
-            $users = User::where('roleId', '=', 2)->paginate(15);
-
-        } catch (\Exception $e) {
-            return $this->fail("Error viewing all students. ".$e->getMessage());
-        }
-    }
-
-    //view students in a class in a session
-
-    public function ViewStudents(Request $request){
-        try {
-            $users = User::where('roleId', '=', 2)->paginate(15);
-
+            $all_students = User::where('roleId', '=', 2)->paginate(15);
+            return response()->json([
+                'students' => $all_students,
+                'success' => true
+                ]);
         } catch (\Exception $e) {
             return $this->fail("Error viewing all students. ".$e->getMessage());
         }
     }
 
 
-    public function ViewStudentsInClass(Request $request){
-        try {
-
-
-        } catch (\Exception $e) {
-            return $this->fail("Error viewing all students in a class. ".$e->getMessage());
-        }
-    }
 
     public function createPermission(Request $request){ 
         try {
@@ -164,7 +152,7 @@ class UserController extends ApiController
     public function FetchPermissionsForRole(Request $request){ 
         try {
             if(empty($request->roleId)){
-                return $this->missingField("The Role Id is required!");
+                return $this->miuserIdssingField("The Role Id is required!");
              }
              $permissions = RolePermission::where('role_id', '=',$request->roleId)->get();
              // pass it into a resource

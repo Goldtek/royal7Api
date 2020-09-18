@@ -18,11 +18,10 @@ class CreateTimeTablesTable extends Migration
             $table->timestamps('start_time');
             $table->timestamps('end_time');
             $table->timestamps('date');
-            $table->bigInteger('teacher');
+            $table->bigInteger('userId');
             $table->bigInteger('schoolId');
             $table->bigInteger('sessionId');
             $table->bigInteger('subjectId');
-            $table->bigInteger('supervisor');
             $table->bigInteger('classId');
             $table->timestamps();
         });
