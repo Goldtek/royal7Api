@@ -27,6 +27,7 @@ class SchoolController extends ApiController
             if(empty($request->email)) {
                 return $this->missingField("email is required!");
             }
+            try {
                 // generate random code
                 $code = md5(uniqid().time());
                 $email = $request->email;
