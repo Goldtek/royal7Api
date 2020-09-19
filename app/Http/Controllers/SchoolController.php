@@ -201,9 +201,30 @@ class SchoolController extends ApiController
         }
 
 
-       // view the grades of a student in a class
-       public function viewEachStudents(Request $request){
+       // view students in a class
+        public function viewStudentsInClass(Request $request){
+            if (empty($request->schoolId)) {
+                return $this->missingField("School Id is required!");
+            } else if (empty($request->classId)){
+                return $this->missingField("Class Id is required!");
+            } else if (empty($request->sessionId)){
+                return $this->missingField("session Id is required!");
+            }
+        
             try {
+              
+                $students =  DB::table('students')
+                ->join('users','id', '=' ,'students.userId')
+                ->where('class_id',$request->classId)
+                ->where('session_id',$request->sessionId)
+                ->where('school_id',$request->schoolId)
+                ->select('users.*') 
+                ->get();
+
+                return response()->json([
+                        'students' => $students,
+                        'success' => true
+                        ]);
 
             } catch (\Exception $e) {
                 return $this->fail("Error viewing student. ".$e->getMessage());
@@ -211,7 +232,8 @@ class SchoolController extends ApiController
         }
 
          // view the grades of a student in a class
-       public function profilePage(Request $request){
+       
+        public function profilePage(Request $request){
             try {
 
 
@@ -221,25 +243,24 @@ class SchoolController extends ApiController
         }
 
 
-            // view all students in a class
-       public function viewAllStudents(Request $request){
+            // view all students in a school
+        public function viewAllStudents(Request $request){
                 if (empty($request->schoolId)) {
                     return $this->missingField("School Id is required!");
-                } else if (empty($request->classId)){
-                    return $this->missingField("Class Id is required!");
+                } else if (empty($request->sessionId)){
+                    return $this->missingField("session Id is required!");
                 }
                 try {
     
                     $students =  DB::table('students')
                     ->join('users','id', '=' ,'students.userId')
-                    ->where('class_id',$request->classId)
-                    ->where('school_id',$request->schoolId)
+                    ->where('session_id',$request->sessionId)
                     ->where('school_id',$request->schoolId)
                     ->select('users.*') 
                     ->get();
     
                     return response()->json([
-                            'students' => $students,
+                            'allStudents' => $students,
                             'success' => true
                             ]);
 
@@ -326,6 +347,11 @@ class SchoolController extends ApiController
                 ->where('times_table.id',$request->schoolId)
                 ->where('times_table.id',$request->sessionId)
                 ->get();
+
+                return response()->json([
+                    'timetable' => $timetable,
+                    'success' => true
+                    ]);
             } catch (\Exception $e) {
                 return $this->fail("Error viewing TimeTable. ".$e->getMessage());
             }
@@ -410,10 +436,10 @@ class SchoolController extends ApiController
                 $class->code = $request->subjectCode;
             
                 if($class->save()){
-                    return $this->success('Class has been created for '.$request->name);
+                    return $this->success('Class Subject has been created for '.$request->name);
                 }
             } catch (\Exception $e) {
-                return $this->fail("Unable to create Class ".$e->getMessage());
+                return $this->fail("Unable to create Class Subject ".$e->getMessage());
             }
         }
 

@@ -98,20 +98,6 @@ class UserController extends ApiController
         }
     }
 
-    public function ViewAllStudents(Request $request){
-        try {
-            $all_students = User::where('roleId', '=', 2)->paginate(15);
-            return response()->json([
-                'students' => $all_students,
-                'success' => true
-                ]);
-        } catch (\Exception $e) {
-            return $this->fail("Error viewing all students. ".$e->getMessage());
-        }
-    }
-
-
-
     public function createPermission(Request $request){ 
         try {
             if(empty($request->name)){
@@ -155,6 +141,11 @@ class UserController extends ApiController
                 return $this->miuserIdssingField("The Role Id is required!");
              }
              $permissions = RolePermission::where('role_id', '=',$request->roleId)->get();
+
+             return response()->json([
+                'permissions' => $permissions,
+                'success' => true
+                ]);
              // pass it into a resource
 
         } catch (\Exception $e) {

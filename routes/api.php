@@ -42,11 +42,10 @@ Route::post('user/logout', 'UserController@logOut');
     //route to create use[teacher/student/staff]
     Route::post('user/create', 'UserController@createUser');
 
-    //route to assign teacher to course
+    //route to assign teacher to subject
     Route::post('assign/subject', 'SchoolController@assignSubject');
 
-    //route to view all subjects
-    Route::post('subjects', 'SchoolController@viewSubjectsForClass');
+   
 
     //route to view all students
     Route::post('view/students', 'UserController@ViewAllStudents');
@@ -66,14 +65,36 @@ Route::post('user/logout', 'UserController@logOut');
     // route for role creation
     Route::post('role/permission/create', 'SchoolController@createRolePermission');
 
+    // route for fetchpermissions for role
+    Route::post('roles/permission/fetch', 'UserController@FetchPermissionsForRole');
+
     // route to view roles
     Route::get('roles/view', 'UserController@viewRoles');
 
-    // route for role creation of subject
+    // route for creation of subject
     Route::post('subject/create', 'SchoolController@createSubject');
 
-    // route for role creation of class
+    // route for  creation of class
     Route::post('class/create', 'SchoolController@createClass');
+
+    // route for  add subject of class
+    Route::post('class/subject/create', 'SchoolController@createSubjectInClass');
+
+     //route to view all subjects added to a class
+     Route::post('subjects', 'SchoolController@viewSubjectsForClass');
+
+    // route for teachers ability to view subjects assigned to him/her
+    Route::post('teachers/view/assigned', 'SchoolController@assignedSubjects');
+
+     // route for setExamTimeTable
+     Route::post('exam/timetable/create', 'SchoolController@setTimeTable');
+
+    // route for view Exam TimeTable
+     Route::post('exam/timetable/view', 'SchoolController@TimeTable');
+
+     // route for view all Classes For a School
+     Route::post('classes/view', 'SchoolController@getClasses');
 
  });
 
+ 
